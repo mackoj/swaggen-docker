@@ -1,8 +1,8 @@
-# Set version
 declare SWAGGEN_VERSION="master"
 declare MAINTAINER="Jeffrey MACKO(@jeffreymacko) - Original maintainer: Mithun Ayachit <m0t0rbr3th@gmail.com>"
 declare SWAGGEN_REPO="https://github.com/yonaskolb/SwagGen"
 declare DOCKER_USER="hawkci"
 declare DOCKER_PROJECT="swaggen"
-declare DOCKER_VERSION="master-slim"
+declare DOCKER_VERSION="master-ccd0ec6-slim"
+declare DOCKER_VERSION_ALIAS="latest-unstable"
 
