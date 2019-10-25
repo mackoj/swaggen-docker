@@ -3,6 +3,6 @@ declare MAINTAINER="Jeffrey MACKO(@jeffreymacko) - Original maintainer: Mithun A
 declare SWAGGEN_REPO="https://github.com/mackoj/SwagGen"
 declare DOCKER_USER="hawkci"
 declare DOCKER_PROJECT="swaggen"
-declare DOCKER_VERSION="master-3421ca1-slim"
+declare DOCKER_VERSION="customPJService-slim"
 declare DOCKER_VERSION_ALIAS="latest-solocal-unstable"
 
