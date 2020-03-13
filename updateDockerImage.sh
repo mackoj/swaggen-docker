@@ -7,6 +7,7 @@ declare MAINTAINER="Jeffrey MACKO(@mackoj/@jeffreymacko)"
 # Optional
 declare DOCKER_IMAGE_VERSION_ALIAS="latest"
 declare SWIFT_VERSION=$(./getLastSwiftTag.swift "apple/swift" "-RELEASE")
+#declare DEPENDENCY_VERSION="$TAG_OR_BRANCH"
 declare DEPENDENCY_VERSION="$(curl --silent "https://api.github.com/repos/${GITHUB_REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 
 # Generated
@@ -98,6 +99,11 @@ echo "Publish"
 echo "---------------------------"
 
 docker login
-docker tag	${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION} ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION_ALIAS}
-docker push ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}
-docker push ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION_ALIAS}
+if [[ "${TAG_OR_BRANCH}" != "master" ]]; then
+	docker tag	${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}
+	docker push ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}
+else
+	docker tag	${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION} ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION_ALIAS}
+	docker push ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}
+	docker push ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION_ALIAS}
+fi
