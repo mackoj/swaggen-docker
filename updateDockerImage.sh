@@ -1,5 +1,3 @@
-set -ex
-
 declare GITHUB_REPO="yonaskolb/SwagGen"
 declare TAG_OR_BRANCH="master"
 declare DOCKERHUB_USER="hawkci"
@@ -8,9 +6,7 @@ declare MAINTAINER="Jeffrey MACKO(@mackoj/@jeffreymacko)"
 
 # Optional
 declare DOCKER_IMAGE_VERSION_ALIAS="latest"
-# declare SWIFT_VERSION="swift-5.1.5-RELEASE"
 declare SWIFT_VERSION=$(./getLastSwiftTag.swift "apple/swift" "-RELEASE")
-# declare DEPENDENCY_VERSION="${TAG_OR_BRANCH}"
 declare DEPENDENCY_VERSION="$(curl --silent "https://api.github.com/repos/${GITHUB_REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 
 # Generated
