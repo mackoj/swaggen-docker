@@ -3,7 +3,9 @@
 import Foundation
 import Version  // mrackwitz/Version
 
-extension String: Error {}
+extension String : Error, LocalizedError {
+  public var errorDescription: String? { get { self } }
+}
 
 extension Sequence {
   func sorted<T: Comparable>(by keyPath: KeyPath<Element, T>) -> [Element] {
@@ -80,7 +82,7 @@ func getTags(_ repo: String, _ releaseFilter: String, completion: @escaping (Res
 
 func main(_ args: [String]) {
   if args.count != 3 {
-    print("Bad number of argument. $>./getLastSwiftTag.swift \"apple/swift\" \"-RELEASE\" \"LAST_SWIFT_VERSION\"");
+    print("Bad number of argument. $>./getLastSwiftTag.swift \"apple/swift\" \"-RELEASE\"");
     exit(EXIT_FAILURE)
   }
   do {
@@ -88,10 +90,6 @@ func main(_ args: [String]) {
       switch result {
       case .success(let version):
         print(version)
-      // do { try "\(version)\n".write(toFile: args[3], atomically: true, encoding: .utf8) } catch {
-      //   print(error)
-      //   exit(EXIT_FAILURE)
-      // }
       case .failure(let err):
         print(err)
         exit(EXIT_FAILURE)
@@ -99,7 +97,7 @@ func main(_ args: [String]) {
     }
   }
   catch {
-    print(error);
+    print(error.localizedDescription);
     exit(EXIT_FAILURE)
   }
 }
