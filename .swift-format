@@ -1,0 +1,11 @@
+{
+  "maximumBlankLines" : 2,
+  "tabWidth" : 4,
+  "lineBreakAroundMultilineExpressionChainComponents" : true,
+  "lineBreakBeforeEachArgument" : true,
+  "indentation" : {
+    "spaces" : 2
+  },
+  "version" : 1,
+  "lineLength" : 120
+}

@@ -1,11 +1,9 @@
-#!/usr/bin/swift sh
-
 // GitHubTagElement.swift
 
 import Foundation
-import Version                  // mrackwitz/Version
+import Version  // mrackwitz/Version
 
-extension String : Error {}
+extension String: Error {}
 
 extension Sequence {
   func sorted<T: Comparable>(by keyPath: KeyPath<Element, T>) -> [Element] {
@@ -27,7 +25,7 @@ public struct GitHubTagElement: Equatable, Codable {
   public var tagName: String {
     get { ref!.replacingOccurrences(of: "refs/tags/", with: "") }
   }
-  public var version : Version {
+  public var version: Version {
     get {
       var nName = name.replacingOccurrences(of: "-RELEASE", with: "")
       return Version(nName)!
@@ -39,7 +37,7 @@ extension GitHubTagElement: Comparable {
   public static func < (lhs: GitHubTagElement, rhs: GitHubTagElement) -> Bool {
     return lhs.version < rhs.version
   }
-  
+
   public static func > (lhs: GitHubTagElement, rhs: GitHubTagElement) -> Bool {
     return lhs.version > rhs.version
   }
@@ -50,11 +48,13 @@ public struct Commit: Equatable, Codable {
   public let sha: String?
   public let type: String?
   public let url: String?
-  
+
 }
 
-func getTags(_ repo : String, _ releaseFilter : String, completion : @escaping (Result<String, Error>)->()) throws {
-  guard let url = URL(string: "https://api.github.com/repos/\(repo)/git/refs/tags") else { throw("Failed to generated URL") }
+func getTags(_ repo: String, _ releaseFilter: String, completion: @escaping (Result<String, Error>) -> ()) throws {
+  guard let url = URL(string: "https://api.github.com/repos/\(repo)/git/refs/tags") else {
+    throw ("Failed to generated URL")
+  }
   let decoder = JSONDecoder()
   decoder.keyDecodingStrategy = .convertFromSnakeCase
   let semaphore = DispatchSemaphore(value: 0)
@@ -68,7 +68,8 @@ func getTags(_ repo : String, _ releaseFilter : String, completion : @escaping (
       let sortedReleases = releases.sorted(by: \.version)
       guard let name = sortedReleases.last?.tagName else { completion(.failure("No release found")); return }
       completion(.success(name))
-    } catch {
+    }
+    catch {
       completion(.failure(error));
       return
     }
@@ -77,23 +78,27 @@ func getTags(_ repo : String, _ releaseFilter : String, completion : @escaping (
   _ = semaphore.wait(timeout: .distantFuture)
 }
 
-func main(_ args : [String]) {
-  if args.count != 3 { print("Bad number of argument. $>./getLastSwiftTag.swift \"apple/swift\" \"-RELEASE\" \"LAST_SWIFT_VERSION\""); exit(EXIT_FAILURE) }
+func main(_ args: [String]) {
+  if args.count != 3 {
+    print("Bad number of argument. $>./getLastSwiftTag.swift \"apple/swift\" \"-RELEASE\" \"LAST_SWIFT_VERSION\"");
+    exit(EXIT_FAILURE)
+  }
   do {
     try getTags(args[1], args[2]) { result in
       switch result {
       case .success(let version):
         print(version)
-        // do { try "\(version)\n".write(toFile: args[3], atomically: true, encoding: .utf8) } catch {
-        //   print(error)
-        //   exit(EXIT_FAILURE)
-        // }
+      // do { try "\(version)\n".write(toFile: args[3], atomically: true, encoding: .utf8) } catch {
+      //   print(error)
+      //   exit(EXIT_FAILURE)
+      // }
       case .failure(let err):
         print(err)
         exit(EXIT_FAILURE)
       }
     }
-  } catch {
+  }
+  catch {
     print(error);
     exit(EXIT_FAILURE)
   }
