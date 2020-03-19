@@ -4,7 +4,7 @@
 
 ## Update process
 
-In order to update the docker image just run `./build.sh`
+In order to update the docker image just run `./updateDockerImage.sh`
 If Swift or Swaggen has a new version it will create a new docker container accordingly.
 
 This require you to have installed `swift-sh`([Github](https://github.com/mxcl/swift-sh)).
