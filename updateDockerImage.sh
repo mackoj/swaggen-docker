@@ -1,16 +1,28 @@
+# Manually set
+# THIS IS THE ONLY PART OF THE SCRIPT THAT WE SHOULD CHANGE IF NEEDED
 declare GITHUB_REPO="yonaskolb/SwagGen"
 declare TAG_OR_BRANCH="master"
 declare DOCKERHUB_USER="hawkci"
 declare DOCKERHUB_PROJECT="swaggen"
 declare MAINTAINER="Jeffrey MACKO(@mackoj/@jeffreymacko)"
-
-# Optional
+declare DEPENDENCY_VERSION_CUSTOM=""
+declare SWIFT_VERSION_CUSTOM=""
 declare DOCKER_IMAGE_VERSION_ALIAS="latest"
-declare SWIFT_VERSION=$(./getLastSwiftTag.swift "apple/swift" "-RELEASE")
-#declare DEPENDENCY_VERSION="$TAG_OR_BRANCH"
-declare DEPENDENCY_VERSION="$(curl --silent "https://api.github.com/repos/${GITHUB_REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 
-# Generated
+
+# PLEASE DON'T CHANGE CODE BEHIND THIS LINE
+
+#########################################################################################
+# DYNAMICALLY SET INPUTS																#
+#########################################################################################
+declare SWIFT_VERSION=$(./getLastSwiftTag.swift "apple/swift" "-RELEASE")
+if [[ -n "${SWIFT_VERSION_CUSTOM}" ]]; then
+	SWIFT_VERSION="${SWIFT_VERSION_CUSTOM}"
+fi
+declare DEPENDENCY_VERSION="$(curl --silent "https://api.github.com/repos/${GITHUB_REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
+if [[ "${TAG_OR_BRANCH}" != "master" ]]; then
+	DEPENDENCY_VERSION="${TAG_OR_BRANCH}"
+fi
 declare GITHUB_USER="$(echo ${GITHUB_REPO} | cut -d"/" -f1)"
 declare GITHUB_PROJECT="$(echo ${GITHUB_REPO} | cut -d"/" -f2)"
 declare GITHUB_FULLURL="https://github.com/${GITHUB_REPO}"
@@ -19,12 +31,9 @@ declare OLD_SWIFT_VERSION="$(cat SWIFT_VERSION)"
 declare EXPECTED_TAR_FILENAME="${GITHUB_USER}-${GITHUB_PROJECT}-*"
 declare DOCKERHUB_PROJECT_ACCOUNT="${DOCKERHUB_USER}/${DOCKERHUB_PROJECT}"
 declare DOCKER_IMAGE_VERSION="${DEPENDENCY_VERSION}-slim"
-
-# Optional
 declare DOCKER_IMAGE_DESCRIPTION="Slim docker image for ${GITHUB_PROJECT}(${DEPENDENCY_VERSION}) with ${SWIFT_VERSION}"
 declare DEPENDENCY_ARCHIVE_URL="${GITHUB_FULLURL}/tarball/${DEPENDENCY_VERSION}"
 declare FORCE_UPDATE=false
-
 
 # TEST for empty DEPENDENCY AND SWIFT VERSION
 if [[ -z "${OLD_DEPENDENCY_VERSION}" ]] && [[ -z "${OLD_SWIFT_VERSION}" ]]; then
@@ -39,10 +48,12 @@ fi
 # Generated
 declare DOCKER_IMAGE_TAG="${DOCKERHUB_USER}/${DOCKERHUB_PROJECT}:${DOCKER_IMAGE_VERSION}"
 
-# BUILD
+#########################################################################################
+# BUILD																					#
+#########################################################################################
 echo "Building Docker image 🐳🔨"
 echo "---------------------------"
-echo "Previous dependency version: ${OLD_DEPENDENCY_VERSION}"
+echo "Previous dependency version: ${OLD_DEPENDENCY_VERSION}\n"
 
 if [[ "$FORCE_UPDATE" = true ]] || [[ "${DEPENDENCY_VERSION}" != "${OLD_DEPENDENCY_VERSION}" ]] || [[ "${SWIFT_VERSION}" != "${OLD_SWIFT_VERSION}" ]]; then
 
@@ -67,11 +78,13 @@ else
   echo "Swaggen: ${OLD_DEPENDENCY_VERSION}"
   echo "Swift: ${OLD_SWIFT_VERSION}"
   echo "No need to update 👍"
+  exit 0 # EXIT_SUCCESS
 fi
 
-# TEST
-
-echo "Testing"
+#########################################################################################
+# TEST																					#
+#########################################################################################
+echo "Testing ⚙️"
 echo "---------------------------"
 DEPENDENCY_TEST_VERSION=$(docker run --rm "${DOCKER_IMAGE_TAG}" swaggen --version)
 if [[ "Version: ${DEPENDENCY_VERSION}" == "${DEPENDENCY_TEST_VERSION}" ]]; then
@@ -80,8 +93,9 @@ else
   echo "👎"
 fi
 
-# TAG
-
+#########################################################################################
+# TAG																					#
+#########################################################################################
 echo "Tag"
 echo "---------------------------"
 
@@ -93,9 +107,10 @@ git tag -d "${DOCKER_IMAGE_VERSION}" || true
 git tag "${DOCKER_IMAGE_VERSION}" -m "${DEPENDENCY_VERSION}/${SWIFT_VERSION}"
 git push origin "${DOCKER_IMAGE_VERSION}"
 
-# PUBLISH
-
-echo "Publish"
+#########################################################################################
+# PUBLISH																				#
+#########################################################################################
+echo "Publish 🚀"
 echo "---------------------------"
 
 docker login
