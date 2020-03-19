@@ -12,7 +12,7 @@ This require you to have installed `swift-sh`([Github](https://github.com/mxcl/s
 ## Available Tags
 
 * `4.3.1-slim`, `latest` ([_Dockerfile_](https://github.com/mackoj/swaggen-docker/blob/4.3.1-slim/Dockerfile))
-* `4.3.0-slim`, `latest` ([_Dockerfile_](https://github.com/mackoj/swaggen-docker/blob/4.3.0-slim/Dockerfile))
+* `4.3.0-slim` ([_Dockerfile_](https://github.com/mackoj/swaggen-docker/blob/4.3.0-slim/Dockerfile))
 * `4.2.0-slim` ([_Dockerfile_](https://github.com/mackoj/swaggen-docker/blob/v4.2.0/Dockerfile))
 * `4.2.0` ([_Dockerfile_](https://github.com/mackoj/swaggen-docker/blob/v4.2.0/Dockerfile))
 
