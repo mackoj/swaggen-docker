@@ -24,7 +24,7 @@ docker pull hawkci/swaggen:latest
 
 declare DOCKER_MOUNTED_PATH="/tmp/workdir"
 
-# curl https://www.mysite.com/swagger.json -o api.json
+curl https://www.mysite.com/swagger.json -o api.json
 
 # Run swaggen
 #   - This assumes your spec file is in $(pwd)/spec.json
@@ -42,4 +42,4 @@ docker run                                                              \
   --verbose
 ```
 
-The project is a fork of [mithun](https://github.com/mithun)([swaggen-docker](https://hub.docker.com/r/mayachit/swaggen)) without his orignal project I wouldn't be able to build this.
+The project is originally a fork of [mithun](https://github.com/mithun)([swaggen-docker](https://hub.docker.com/r/mayachit/swaggen)) without his orignal project I wouldn't be able to build this.
