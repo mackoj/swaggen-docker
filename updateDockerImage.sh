@@ -1,11 +1,11 @@
+
 # Manually set
 # THIS IS THE ONLY PART OF THE SCRIPT THAT WE SHOULD CHANGE IF NEEDED
-declare GITHUB_REPO="yonaskolb/SwagGen"
-declare TAG_OR_BRANCH="master"
+declare GITHUB_REPO="mackoj/SwagGen"
+declare TAG_OR_BRANCH="RedoSplit"
 declare DOCKERHUB_USER="hawkci"
 declare DOCKERHUB_PROJECT="swaggen"
 declare MAINTAINER="Jeffrey MACKO(@mackoj/@jeffreymacko)"
-declare DEPENDENCY_VERSION_CUSTOM=""
 declare SWIFT_VERSION_CUSTOM=""
 declare DOCKER_IMAGE_VERSION_ALIAS="latest"
 
@@ -15,7 +15,7 @@ declare DOCKER_IMAGE_VERSION_ALIAS="latest"
 #########################################################################################
 # DYNAMICALLY SET INPUTS																#
 #########################################################################################
-declare SWIFT_VERSION=$(./getLastSwiftTag.swift "apple/swift" "-RELEASE")
+declare SWIFT_VERSION=$(swift sh getLastSwiftTag.swift "apple/swift" "-RELEASE")
 if [[ -n "${SWIFT_VERSION_CUSTOM}" ]]; then
 	SWIFT_VERSION="${SWIFT_VERSION_CUSTOM}"
 fi
@@ -84,6 +84,8 @@ fi
 #########################################################################################
 # TEST																					#
 #########################################################################################
+if [[ "${TAG_OR_BRANCH}" == "master" ]]; then
+
 echo "Testing ⚙️"
 echo "---------------------------"
 DEPENDENCY_TEST_VERSION=$(docker run --rm "${DOCKER_IMAGE_TAG}" swaggen --version)
@@ -91,6 +93,8 @@ if [[ "Version: ${DEPENDENCY_VERSION}" == "${DEPENDENCY_TEST_VERSION}" ]]; then
   echo "👍"
 else
   echo "👎"
+fi
+
 fi
 
 #########################################################################################
@@ -115,7 +119,6 @@ echo "---------------------------"
 
 docker login
 if [[ "${TAG_OR_BRANCH}" != "master" ]]; then
-	docker tag	${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}
 	docker push ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}
 else
 	docker tag	${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION} ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION_ALIAS}
