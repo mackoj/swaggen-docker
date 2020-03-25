@@ -53,6 +53,7 @@ declare DOCKER_IMAGE_TAG="${DOCKERHUB_USER}/${DOCKERHUB_PROJECT}:${DOCKER_IMAGE_
 echo "Building Docker image 🐳🔨"
 echo "---------------------------"
 echo "Previous dependency version: ${OLD_DEPENDENCY_VERSION}\n"
+echo "Previous Swift version: ${OLD_SWIFT_VERSION}\n"
 
 if [[ "$FORCE_UPDATE" = true ]] || [[ "${DEPENDENCY_VERSION}" != "${OLD_DEPENDENCY_VERSION}" ]] || [[ "${SWIFT_VERSION}" != "${OLD_SWIFT_VERSION}" ]]; then
 
