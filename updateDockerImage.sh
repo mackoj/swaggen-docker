@@ -35,7 +35,7 @@ declare DEPENDENCY_ARCHIVE_URL="${GITHUB_FULLURL}/tarball/${DEPENDENCY_VERSION}"
 declare FORCE_UPDATE=false
 
 # TEST for empty DEPENDENCY AND SWIFT VERSION
-if [[ -z "${OLD_DEPENDENCY_VERSION}" ]] && [[ -z "${OLD_SWIFT_VERSION}" ]]; then
+if [[ -z "${OLD_DEPENDENCY_VERSION}" ]] || [[ -z "${OLD_SWIFT_VERSION}" ]]; then
   echo "${DEPENDENCY_VERSION}" > VERSION
   echo "${SWIFT_VERSION}" > SWIFT_VERSION
   FORCE_UPDATE=true
@@ -56,6 +56,11 @@ echo "Previous dependency version: ${OLD_DEPENDENCY_VERSION}\n"
 echo "Previous Swift version: ${OLD_SWIFT_VERSION}\n"
 
 if [[ "$FORCE_UPDATE" = true ]] || [[ "${DEPENDENCY_VERSION}" != "${OLD_DEPENDENCY_VERSION}" ]] || [[ "${SWIFT_VERSION}" != "${OLD_SWIFT_VERSION}" ]]; then
+
+  echo "Remove previous image"
+  echo "---------------------"
+  docker login
+  docker rmi -f ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION} || true
 
   # Build
   docker build                                                            \
@@ -119,6 +124,7 @@ echo "---------------------------"
 
 docker login
 if [[ "${TAG_OR_BRANCH}" != "master" ]]; then
+	docker tag	${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION} "${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}-latest"
 	docker push ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION}
 else
 	docker tag	${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION} ${DOCKERHUB_PROJECT_ACCOUNT}:${DOCKER_IMAGE_VERSION_ALIAS}
